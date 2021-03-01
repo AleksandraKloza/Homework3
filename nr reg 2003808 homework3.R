@@ -77,3 +77,4 @@ screeplot(pca, type = "lines")
 install.packages("factoextra")
 library("factoextra")
 fviz_pca_var(pca)
+

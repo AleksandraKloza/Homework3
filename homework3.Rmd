@@ -67,9 +67,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #### Plotting the model
 
-```{r} plot <- ggplot(stroop_model, aes(x = condition, y = rt)) + geom_point() + stat_smooth(method = "lm", col = "red") + ylab("Reaction time intercept") + xlab("Condition") ```
+```{r} ggplot(stroop_model, aes(x = condition, y = rt)) + geom_point() + stat_smooth(method = "lm", col = "red") + ylab("Reaction time intercept") + xlab("Condition") ```
 
-```{r, echo=TRUE} print(plot) ```
 
 ### Results:
 
@@ -80,3 +79,5 @@ knitr::opts_chunk$set(echo = TRUE)
 #### -> For the sitting down condition the intercept is equal 819.47, and for the standing up condition it is 841.52 (819.47+22.05), what is also shown on the graph
 
 #### -> In conclusion, the replication of the study showed an opposite result than the original study
+
+## Question 3
