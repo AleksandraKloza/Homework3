@@ -32,7 +32,8 @@ summary(stroop_model)
 #Significant results; There is a relationship between reaction time and condition - lower reaction time in condition with a start standing up than in condition with a start sitting down
 
 #Plotting the model
-stroopplot <- ggplot(stroop_model, aes(x = condition, y = rt)) + 
+
+ggplot(stroop_model, aes(x = condition, y = rt)) + 
   geom_point() +
   stat_smooth(method = "lm", col = "red") +
   ylab("Reaction time intercept") + xlab("Condition")
