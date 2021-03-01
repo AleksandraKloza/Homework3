@@ -254,8 +254,7 @@ summary {
 </div>
 <div id="plotting-the-model" class="section level4">
 <h4>Plotting the model</h4>
-<p><code>{r} plot &lt;- ggplot(stroop_model, aes(x = condition, y = rt)) + geom_point() + stat_smooth(method = &quot;lm&quot;, col = &quot;red&quot;) + ylab(&quot;Reaction time intercept&quot;) + xlab(&quot;Condition&quot;)</code></p>
-<p><code>{r, echo=TRUE} print(plot)</code></p>
+<p><code>{r stroopplot, echo=FALSE} stroopplot &lt;- ggplot(stroop_model, aes(x = condition, y = rt)) + geom_point() + stat_smooth(method = &quot;lm&quot;, col = &quot;red&quot;) + ylab(&quot;Reaction time intercept&quot;) + xlab(&quot;Condition&quot;)</code> <code>{r} plot(stroopplot)</code></p>
 </div>
 <div id="results" class="section level3">
 <h3>Results:</h3>
@@ -272,6 +271,9 @@ summary {
 <h4>-&gt; In conclusion, the replication of the study showed an opposite result than the original study</h4>
 </div>
 </div>
+</div>
+<div id="question-3" class="section level2">
+<h2>Question 3</h2>
 </div>
 
 

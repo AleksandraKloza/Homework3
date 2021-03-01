@@ -67,8 +67,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #### Plotting the model
 
-```{r} ggplot(stroop_model, aes(x = condition, y = rt)) + geom_point() + stat_smooth(method = "lm", col = "red") + ylab("Reaction time intercept") + xlab("Condition") ```
 
+```{r stroopplot, echo=FALSE} stroopplot <- ggplot(stroop_model, aes(x = condition, y = rt)) + geom_point() + stat_smooth(method = "lm", col = "red") + ylab("Reaction time intercept") + xlab("Condition") ```
+```{r} plot(stroopplot) ```
 
 ### Results:
 
