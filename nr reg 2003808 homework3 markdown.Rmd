@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #### Loading "tidyverse" and setting some options
 
-```{r} 
+```{r message=FALSE} 
 library(tidyverse) 
 ```
 
@@ -38,7 +38,7 @@ options(scipen = 5, digits = 3)
 
 #### Loading the Excel data
 
-```{r warning=FALSE} 
+```{r warning=FALSE, message=FALSE} 
 stroop_data <- read_csv("stroop_standing_data.csv")
 ```
 
@@ -76,36 +76,48 @@ stroop_data <- filter(stroop_data, phase != "practice")
 stroop_data <- filter(stroop_data, correct < 2) 
 ```
 
+#### Removing trial and stimulus for future plots
+```{r}
+stroop_data <- select(stroop_data, -trial)
+stroop_data <- select(stroop_data, -stimulus)
+```
+
 #### To test the hypothesis I will fit a linear model 
-##### The measured relationship is between reaction time in different phases (standing vs sitting) in congruent and incongruent trials.
+##### -> The measured relationship is between reaction time in different phases (standing vs sitting) in congruent and incongruent trials.
 
 ```{r}
-stroop_model_phase <- lm(rt~phase+congruency, stroop_data)
+stroop_model_phase <- lm(rt ~ phase + congruency, stroop_data)
 summary(stroop_model_phase)
 ```
-##### Only the sitting down block is significantly related to the reaction time. Standing phase is not significant.As in the previous model, only the reaction times during incongruent trials are impacted.
+##### -> Only the sitting down block is significantly related to the reaction time. Standing phase is not significant.As in the previous model, only the reaction times during incongruent trials are impacted.
 
-#### Plotting the results
+#### Plotting the results after uniting the variables
 
-```{r}
+```{r warning=FALSE}
+stroop_data %>%
+  unite("phaseandcongruency", phase:congruency, na.rm = TRUE, remove = FALSE) %>%
+  glimpse() -> phasecongruency
 
-
+ggplot(data = phasecongruency, aes(phaseandcongruency)) + geom_boxplot(aes(phaseandcongruency, rt))
 ```
 
-### Results:
+##### -> The plot shows the insignificant difference between reaction times in baseline and congruent conditions while both sitting down and standing up
 
-##### - In the original study, participants showed a smaller Stroop effect when they started the task standing than when sitting
+
+#### Results:
+
+##### - In the original study, participants showed a smaller Stroop effect when they started the task standing than when sitting.
 
 ##### - Results from this replication showed that reaction time was significantly impacted only during incongruent trials. Sitting down was the only significant phase. It suggests that standing up is not a factor that impacts reaction time at all, and sitting down impacts the reaction time only in incongruent trials. 
 
-##### If reaction time increases while sitting down in incongruent trials, the results mean that the Stroop effect will be smaller if participants standing.
+##### - If reaction time increases while sitting down in incongruent trials, the results mean that the Stroop effect will be smaller if participants standing.
 
-##### In conclusion, the replication study confirmed the original study's results as the Stroop effect is smaller in the standing phase than the sitting down phase.
+##### - In conclusion, the replication study confirmed the original study's results as the Stroop effect is smaller in the standing phase than the sitting down phase.
 
 ## Question 3
 
 #### Loading in the Excel data
-```{r}
+```{r message=FALSE}
 spotify_data <- read.csv("spotify_cleaned.csv")
 view(spotify_data)
 ```
@@ -120,7 +132,7 @@ spotify_data <- select(spotify_data, -X, -Track.Name, -Artist, -Streams, -time_s
 pca <- prcomp(spotify_data) 
 summary(pca) 
 ```
-##### We can see that around 99% of the variance is explained by the first two principal components
+##### -> We can see that around 99% of the variance is explained by the first two principal components
 
 #### PCA needs to be performed on a symmetric correlation or covariance matrix, so an improvement could be scaling the columns
 
@@ -144,12 +156,13 @@ pca_s <- prcomp(spotify_data_s)
 summary(pca_s)
 ```
 
-##### After centering the variables the variance changed - it is more spread out now
+##### -> After centering the variables the variance changed - it is more spread out now
 
-#### Installing packages and plotting the results
-screeplot(pca_s, type = "lines")
-install.packages("factoextra")
+#### Plotting the results
+```{r message=FALSE}
 library("factoextra")
+screeplot(pca_s, type = "lines")
 fviz_pca_var(pca_s)
+```
 
-##### The graph shows that acousticness is a factor related to popularity in the strongest positive way.
+##### -> The graph shows that acousticness is a factor related to popularity in the strongest positive way.

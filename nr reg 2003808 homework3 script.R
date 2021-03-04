@@ -26,23 +26,29 @@ stroop_data <- filter(stroop_data, phase != "practice")
 #Getting rid of the mistrials by leaving just the ones coded as correct (1) and incorrect (0)
 stroop_data <- filter(stroop_data, correct < 2)
 
-#It's a linear model because it's a relationship between "position" (standing or sitting down) and reaction time
-stroop_model <- lm(rt~condition, stroop_data)
-summary(stroop_model) 
-#Significant results; There is a relationship between reaction time and condition - lower reaction time in condition with a start standing up than in condition with a start sitting down
+#Removing trial and stimulus for future plots
+stroop_data <- select(stroop_data, -trial)
+stroop_data <- select(stroop_data, -stimulus)
 
-#Plotting the model
+#To test the hypothesis I will fit a linear model 
+#The measured relationship is between reaction time in different phases (standing vs sitting) in congruent and incongruent trials.
+stroop_model_phase <- lm(rt ~ phase + congruency, stroop_data)
+summary(stroop_model_phase) 
+#Only the sitting down block is significantly related to the reaction time. Standing phase is not significant.As in the previous model, only the reaction times during incongruent trials are impacted.
 
-ggplot(stroop_model, aes(x = condition, y = rt)) + 
-  geom_point() +
-  stat_smooth(method = "lm", col = "red") +
-  ylab("Reaction time intercept") + xlab("Condition")
+#Plotting the model after uniting the variables
+stroop_data %>%
+  unite("phaseandcongruency", phase:congruency, na.rm = TRUE, remove = FALSE) %>%
+  glimpse() -> phasecongruency
+
+ggplot(data = phasecongruency, aes(phaseandcongruency)) + geom_boxplot(aes(phaseandcongruency, rt))
+#The plot shows the insignificant difference between reaction times in baseline and congruent conditions while both sitting down and standing up
 
 #RESULTS:
-#In the original study, participants showed a smaller Stroop effect when they performed the task standing than when sitting
-#Results from this replication showed a significant lower reaction time in participants who started the task sitting down (condition 1) than standing up (condition 2)
-#For the sitting down condition the intercept is equal 819.47, and for the standing up condition it is 841.52 (819.47+22.05), what is also shown on the graph
-#In conclusion, the replication of the study showed an opposite result than the original study
+# - In the original study, participants showed a smaller Stroop effect when they started the task standing than when sitting
+# - Results from this replication showed that reaction time was significantly impacted only during incongruent trials. Sitting down was the only significant phase. It suggests that standing up is not a factor that impacts reaction time at all, and sitting down impacts the reaction time only in incongruent trials. 
+# If reaction time increases while sitting down in incongruent trials, the results mean that the Stroop effect will be smaller if participants standing.
+# In conclusion, the replication study confirmed the original study's results as the Stroop effect is smaller in the standing phase than the sitting down phase.
 
 #Question 3
 
@@ -55,26 +61,33 @@ spotify_data <- select(spotify_data, -X, -Track.Name, -Artist, -Streams, -time_s
 
 #Running a PCA
 pca <- prcomp(spotify_data) 
-summary(pca) #We can see that around 99% of the variance is explained by the first two principal components
+summary(pca) 
+# We can see that around 99% of the variance is explained by the first two principal components
 
-#PCA needs to be performed on a symmetric correlation or covariance matrix, so an improvement could be scaling the columns
-
+# PCA needs to be performed on a symmetric correlation or covariance matrix, so an improvement could be scaling the columns
 spotify_data_s <- mutate(spotify_data,
-                       tempo = scale(tempo),
-                       energy = scale(energy),
-                       danceability = scale(danceability),
-                       loudness = scale(loudness),
-                       valence = scale(valence),
-                       acousticness = scale(acousticness)
-                       )
+                         tempo = scale(tempo),
+                         energy = scale(energy),
+                         danceability = scale(danceability),
+                         loudness = scale(loudness),
+                         valence = scale(valence),
+                         acousticness = scale(acousticness),
+                         key = scale(key),
+                         mode = scale(mode),
+                         speechiness = scale(speechiness),
+                         instrumentalness = scale(instrumentalness),
+                         liveness = scale(liveness),
+                         duration_sec = scale(duration_sec)
+                         )
 
 pca_s <- prcomp(spotify_data_s)
 summary(pca_s)
-#After centering the variables the variance changed - it is less spread out now
-#The first principal component covers almost 99% of the variance
 
-#Installing packages and plotting the results
-screeplot(pca, type = "lines")
-install.packages("factoextra")
+#After centering the variables the variance changed - it is more spread out now
+
+#Plotting the results
 library("factoextra")
-fviz_pca_var(pca)
+screeplot(pca_s, type = "lines")
+fviz_pca_var(pca_s)
+
+#The graph shows that acousticness is a factor related to popularity in the strongest positive way.
